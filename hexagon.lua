@@ -18,8 +18,26 @@ Hexagons.get_s = function(hex_coords)
     return -hex_coords.q - hex_coords.r
 end
 
+Hexagons.get_hex_coords = function(world_coords)
+    local q = (2 / 3 * world_coords.x) / size
+    local r = (-1 / 3 * world_coords.x + math.sqrt(3) / 3 * world_coords.y) / size
+    return Hexagons.round(HexCoords(q, r))
+end
+
+Hexagons.round = function(hex_coords)
+    local xgrid = math.floor(hex_coords.q + .5)
+    local ygrid = math.floor(hex_coords.r + .5);
+    local x = hex_coords.q - xgrid
+    local y = hex_coords.r - ygrid
+    if math.abs(x) >= math.abs(y) then
+        return HexCoords(xgrid + math.floor((x + 0.5 * y) + .5), ygrid)
+    else
+        return HexCoords(xgrid, ygrid + math.floor((y + 0.5 * x) + .5))
+    end
+end
+
 Hexagons.get_center = function(hex_coords)
-    return ScreenCoords(size * 3 / 2 * hex_coords.q, size * math.sqrt(3) * (hex_coords.r + hex_coords.q / 2))
+    return WorldCoords(size * 3 / 2 * hex_coords.q, size * math.sqrt(3) * (hex_coords.r + hex_coords.q / 2))
 end
 
 Hexagons.get_vertices = function(hex_coords)
@@ -34,27 +52,23 @@ Hexagons.get_vertices = function(hex_coords)
     return vertices
 end
 
-Tile = Class {
-    init = function(self, hex_coords)
-        self.coords = hex_coords
-    end
-}
-
-function Tile:draw()
-    local vertices = Hexagons.get_vertices(self.coords)
-    love.graphics.setColor(0.1, 1, 0.1)
-    love.graphics.polygon("fill", vertices)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.polygon("line", vertices)
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.points(Hexagons.get_center(self.coords))
-end
-
 --- Represents the location of a hexagon in axial coordinates
 HexCoords = Class {
     init = function(self, q, r)
         self.q = q
         self.r = r
+    end
+}
+
+function HexCoords:key()
+    return self.q .. "," .. self.r
+end
+
+--- Represents a point in the game
+WorldCoords = Class {
+    init = function(self, x, y)
+        self.x = x
+        self.y = y
     end
 }
 

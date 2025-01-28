@@ -1,3 +1,6 @@
 [submodule "hump"]
 	path = hump
 	url = git@github.com:vrld/hump.git
+[submodule "Slab"]
+	path = Slab
+	url = git@github.com:flamendless/Slab.git

@@ -1,29 +1,11 @@
-require "map"
-Camera = require "hump.camera"
+Gamestate = require "hump.gamestate"
+require "main_menu"
+require "game"
+local Slab = require 'Slab'
 
-function love.load()
-    camera = Camera(0, 0)
-    map = Map(4)
-end
-
-function love.wheelmoved(dx, dy)
-    if dy > 0 then
-        camera:zoom(0.9)
-    elseif dy < 0 then
-        camera:zoom(1.1)
-    end
-end
-
-function love.mousemoved(x, y, dx, dy)
-    if love.mouse.isDown(1) then
-        camera:move(-dx, -dy)
-    end
-end
-
-function love.draw()
-    camera:attach()
-
-    map:draw()
-
-    camera:detach()
+function love.load(args)
+    Slab.SetINIStatePath(nil)
+    Slab.Initialize(args)
+    Gamestate.registerEvents()
+    Gamestate.switch(main_menu)
 end
