@@ -5,8 +5,8 @@ require "hexagon"
 Player = Class {
     init = function(self)
         self.location = WorldCoords(0, 0)
-        self.inventory = Inventory()
-        self.money = 100
+        self.inventory = PlayerInventory("Player Inventory")
+        self.money = 40
     end
 }
 

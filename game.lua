@@ -3,42 +3,49 @@ require "entity"
 Camera = require "hump.camera"
 require "tile"
 require "player"
+require "dialog"
 require "hud"
 local Slab = require 'Slab'
 
-game = {}
+GAME = {}
 
-function game:enter()
+function GAME:enter()
     self.dialogs = {}
     self.camera = Camera(0, 0)
     self.map = Map(4)
-    self.map.tiles[HexCoords(0, 0):key()].entity = BeeBox()
-    self.map.tiles[HexCoords(4, 0):key()].entity = Shop()
     self.player = Player()
+    local content = {}
+    content[ScreenCoords(0, 0)] = self.player.inventory
+    self.inventory_window = Dialog('Inventory', content)
     self.hud = Hud()
 end
 
-function game:update(dt)
+function GAME:update(dt)
     Slab.Update(dt)
     self.player:update(dt)
     self.map:update(dt)
     self.hud:update()
+    for _, dialog in pairs(self.dialogs) do
+        dialog:update(dt)
+    end
 end
 
-function game:keypressed(key)
+function GAME:keypressed(key)
     if key == "escape" then
-        Gamestate.switch(main_menu)
+        for _, dialog in pairs(self.dialogs) do
+            dialog:close()
+        end
     elseif key == "e" then
-        self.player.inventory:toggle()
+        self.inventory_window:toggle()
     elseif key == "space" then
-        local entity = self.map.tiles[Hexagons.get_hex_coords(self.player.location):key()].entity
-        if entity then
-            entity:interact(self.player)
+        local tile = self.map.tiles[Hexagons.get_hex_coords(self.player.location):key()]
+        if tile and tile.entity then
+            tile.entity:interact(self.player)
         end
     end
 end
 
-function game:draw()
+function GAME:draw()
     self.camera:attach()
 
     self.map:draw()
@@ -47,13 +54,13 @@ function game:draw()
     self.camera:detach()
 
     self.hud:update()
-    for _, dialog in ipairs(self.dialogs) do
+    for _, dialog in pairs(self.dialogs) do
         dialog:draw()
     end
     Slab.Draw()
 end
 
-function game:wheelmoved(dx, dy)
+function GAME:wheelmoved(dx, dy)
     if dy > 0 then
         self.camera:zoom(1.1)
     elseif dy < 0 then
@@ -61,7 +68,7 @@ function game:wheelmoved(dx, dy)
     end
 end
 
-function game:mousemoved(x, y, dx, dy)
+function GAME:mousemoved(x, y, dx, dy)
     if love.mouse.isDown(1) then
         self.camera:move(-dx/self.camera.scale, -dy/self.camera.scale)
     end

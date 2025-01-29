@@ -7,5 +7,5 @@ function love.load(args)
     Slab.SetINIStatePath(nil)
     Slab.Initialize(args)
     Gamestate.registerEvents()
-    Gamestate.switch(main_menu)
+    Gamestate.switch(GAME)
 end

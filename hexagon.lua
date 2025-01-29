@@ -10,8 +10,7 @@ All hexagons are flat top
 ## Screen/pixel coordinates for unaligned entities
 ]] --
 Hexagons = {}
-size = 25
-side = math.sqrt(3) / 2 * size
+local size = 25
 
 --- Gets the s cubic coordinate from axial coordinates
 Hexagons.get_s = function(hex_coords)

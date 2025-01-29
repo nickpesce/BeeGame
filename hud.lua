@@ -15,7 +15,7 @@ function Hud:update()
         NoSavedSettings = true
     })
     Slab.BeginLayout('TopHudLayout', {AlignX= 'right'})
-    Slab.Text("$"..game.player.money)
+    Slab.Text("$"..GAME.player.money)
     Slab.EndLayout()
     Slab.EndWindow()
 end

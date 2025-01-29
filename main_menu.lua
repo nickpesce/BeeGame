@@ -1,26 +1,26 @@
 local Slab = require 'Slab'
 Gamestate = require 'hump.gamestate'
 
-main_menu = {}
+MAIN_MENU = {}
 
-function main_menu:update(dt)
+function MAIN_MENU:update(dt)
     Slab.Update(dt)
 
     Slab.BeginWindow('MainMenu', {
         Title = "Bee Game"
     })
     if Slab.Button("Play") then
-        Gamestate.switch(game)
+        Gamestate.switch(GAME)
     end
     Slab.EndWindow()
 end
 
-function main_menu:keypressed(key)
+function MAIN_MENU:keypressed(key)
     if key == "escape" then
         love.event.quit()
     end
 end
 
-function main_menu:draw()
+function MAIN_MENU:draw()
     Slab.Draw()
 end
