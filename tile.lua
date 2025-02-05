@@ -25,6 +25,6 @@ end
 
 function Tile:update(dt)
     if self.entity then
-        self.entity:update(dt)
+        self.entity:update(dt, self)
     end
 end

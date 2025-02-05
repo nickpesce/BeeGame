@@ -15,16 +15,17 @@ function GAME:enter()
     self.map = Map(4)
     self.player = Player()
     local content = {}
-    content[ScreenCoords(0, 0)] = self.player.inventory
+    content[ScreenCoords(0, 0)] = self.player.inventory_view
     self.inventory_window = Dialog('Inventory', content)
     self.hud = Hud()
+    self.updatables = {[self.player] = true, [self.hud] = true, [self.map] = true}
 end
 
 function GAME:update(dt)
     Slab.Update(dt)
-    self.player:update(dt)
-    self.map:update(dt)
-    self.hud:update()
+    for updatable, _ in pairs(self.updatables) do
+        updatable:update(dt)
+    end
     for _, dialog in pairs(self.dialogs) do
         dialog:update(dt)
     end

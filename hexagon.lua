@@ -59,6 +59,17 @@ HexCoords = Class {
     end
 }
 
+function HexCoords:neighbors()
+    return {
+        HexCoords(self.q + 1, self.r),
+        HexCoords(self.q + 1, self.r - 1),
+        HexCoords(self.q, self.r - 1),
+        HexCoords(self.q - 1, self.r),
+        HexCoords(self.q - 1, self.r + 1),
+        HexCoords(self.q, self.r + 1)
+    }
+end
+
 function HexCoords:key()
     return self.q .. "," .. self.r
 end
