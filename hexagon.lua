@@ -10,7 +10,7 @@ All hexagons are flat top
 ## Screen/pixel coordinates for unaligned entities
 ]] --
 Hexagons = {}
-local size = 25
+Hexagons.size = 25
 
 --- Gets the s cubic coordinate from axial coordinates
 Hexagons.get_s = function(hex_coords)
@@ -18,8 +18,8 @@ Hexagons.get_s = function(hex_coords)
 end
 
 Hexagons.get_hex_coords = function(world_coords)
-    local q = (2 / 3 * world_coords.x) / size
-    local r = (-1 / 3 * world_coords.x + math.sqrt(3) / 3 * world_coords.y) / size
+    local q = (2 / 3 * world_coords.x) / Hexagons.size
+    local r = (-1 / 3 * world_coords.x + math.sqrt(3) / 3 * world_coords.y) / Hexagons.size
     return Hexagons.round(HexCoords(q, r))
 end
 
@@ -36,7 +36,8 @@ Hexagons.round = function(hex_coords)
 end
 
 Hexagons.get_center = function(hex_coords)
-    return WorldCoords(size * 3 / 2 * hex_coords.q, size * math.sqrt(3) * (hex_coords.r + hex_coords.q / 2))
+    return WorldCoords(Hexagons.size * 3 / 2 * hex_coords.q,
+        Hexagons.size * math.sqrt(3) * (hex_coords.r + hex_coords.q / 2))
 end
 
 Hexagons.get_vertices = function(hex_coords)
@@ -45,8 +46,8 @@ Hexagons.get_vertices = function(hex_coords)
         local center = Hexagons.get_center(hex_coords)
         local angle_deg = 60 * i
         local angle_rad = math.pi / 180 * angle_deg
-        vertices[2 * i - 1] = center.x + size * math.cos(angle_rad)
-        vertices[2 * i] = center.y + size * math.sin(angle_rad)
+        vertices[2 * i - 1] = center.x + Hexagons.size * math.cos(angle_rad)
+        vertices[2 * i] = center.y + Hexagons.size * math.sin(angle_rad)
     end
     return vertices
 end
@@ -59,14 +60,15 @@ HexCoords = Class {
     end
 }
 
+-- Returns neighbors coordinates in clockwise order
 function HexCoords:neighbors()
     return {
-        HexCoords(self.q + 1, self.r),
-        HexCoords(self.q + 1, self.r - 1),
         HexCoords(self.q, self.r - 1),
-        HexCoords(self.q - 1, self.r),
+        HexCoords(self.q + 1, self.r - 1),
+        HexCoords(self.q + 1, self.r),
+        HexCoords(self.q, self.r + 1),
         HexCoords(self.q - 1, self.r + 1),
-        HexCoords(self.q, self.r + 1)
+        HexCoords(self.q - 1, self.r),
     }
 end
 

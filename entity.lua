@@ -4,6 +4,7 @@ require "pipe"
 Entity = Class {
     init = function(self, type)
         self.type = type
+        self.tile = nil
     end
 }
 
@@ -12,8 +13,27 @@ function Entity:draw()
     love.graphics.print(0, 0, self.type)
 end
 
+function Entity:maybe_connect_to_pipes()
+    if self.tile then
+        local neighbors = self.tile.coords:neighbors()
+        for i, neighbor in ipairs(neighbors) do
+            local neighbor_tile = GAME.map.tiles[neighbor:key()]
+            if neighbor_tile and neighbor_tile.entity then
+                local entity = neighbor_tile.entity
+                if (entity.type == "Pipe" and entity.pipe_system == self.pipe_system) or entity.type == "BeeBox" or entity.type == "Shop" then
+                    love.graphics.push()
+                    love.graphics.rotate((i - 1) * math.pi / 3)
+                    love.graphics.rectangle("fill", -2.5, 0, 5, -Hexagons.size)
+                    love.graphics.pop()
+                end
+            end
+        end
+    end
+end
+
 function Entity:place(tile)
     tile.entity = self
+    self.tile = tile
 end
 
 function Entity:interact()
@@ -51,6 +71,7 @@ function BeeBox:draw()
         love.graphics.setColor(1, 1, 0)
         love.graphics.line(-5, 5, self.honey - 5, 5)
     end
+    self:maybe_connect_to_pipes()
 end
 
 function BeeBox:interact()
@@ -71,6 +92,7 @@ Shop = Class {
 function Shop:draw()
     love.graphics.setColor(.6, .2, .1)
     love.graphics.circle("fill", 0, 0, 10)
+    self:maybe_connect_to_pipes()
 end
 
 function Shop:interact()
@@ -157,13 +179,15 @@ function Pipe:draw()
         love.graphics.setColor(.3, .3, .3)
     end
     love.graphics.circle("fill", 0, 0, 5)
+    self:maybe_connect_to_pipes()
 end
 
 function Pipe:update(dt, tile)
 end
 
 function Pipe:place(tile)
-    tile.entity = self
+    Entity.place(self, tile)
+
     local neighbor_systems = {}
     for _, neighbor in ipairs(tile.coords:neighbors()) do
         local neighbor_tile = GAME.map.tiles[neighbor:key()]
